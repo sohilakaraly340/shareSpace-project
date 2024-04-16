@@ -1,0 +1,91 @@
+/* .parent {
+  width: 70%;
+  margin: 100px auto;
+  border: 1px solid #0891b2;
+  border-radius: 12px;
+}
+.parent img {
+  max-width: 80%;
+}
+.auth {
+  background-color: #0891b2;
+  padding: 50px;
+  border-radius: 0 12px 12px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.auth label {
+  width: 70%;
+  margin: 30px 0 5px 0;
+}
+p {
+  margin: 0 10px;
+}
+button {
+  padding: 20px 200px;
+}
+
+@media only screen and (max-width: 900px) {
+  .parent {
+    width: 95%;
+  }
+  form label {
+    width: 80%;
+  }
+} */
+/* input {
+  margin: 10px 0;
+  background-color: transparent !important;
+} */
+@keyframes horizontal-shaking {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(5px);
+  }
+  50% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.shake {
+  -webkit-animation: horizontal-shaking 0.5s ease-in-out;
+  animation: horizontal-shaking 0.5s ease-in-out;
+}
+/* .sub {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 50px auto;
+  font-size: 1.5rem;
+  padding: 20px;
+  height: fit-content;
+}
+.sub:hover {
+  background-color: white;
+  color: #030712;
+} */
+.form-container {
+  transition: all 0.4s ease-in-out;
+}
+
+.image-container {
+  transition: all 0.4s ease-in-out;
+}
+
+.move-left {
+  transform: translateX(-100%);
+}
+
+.move-right {
+  transform: translateX(100%);
+}

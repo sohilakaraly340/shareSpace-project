@@ -11,36 +11,47 @@ export default function Profile() {
   return (
     <>
       <PostPopUp />
-      <div className="flex justify-between pt-[100px] ">
-        <div className=" fixed w-1/3">
-          <div className="rounded-full mx-auto w-[200px] h-[200px] relative">
-            <img src={profile} />
-            <div className=" border-white border-2 bg-[#A7A9AE] w-fit p-3 rounded-full absolute bottom-1 right-3">
-              <Edit h={"6"} w={"6"} hover={" text-yellow-50"} />
+      <div className="md:flex justify-between pt-[100px] ">
+        <div className=" md:fixed md:w-1/3">
+          <div className="flex justify-center gap-5 md:block">
+            <div className="rounded-full md:mx-auto w-[100px] md:w-[200px] md:h-[200px] relative">
+              <img src={profile} />
+              <label
+                htmlFor="profileImageInput"
+                className="border-white border-2 bg-[#A7A9AE] w-fit p-3 rounded-full absolute bottom-[-5px] right-[-10px] md:bottom-1 md:right-3 cursor-pointer"
+              >
+                <Edit h={"6"} w={"6"} hover={" text-yellow-50"} />
+                <input
+                  type="file"
+                  id="profileImageInput"
+                  className="hidden"
+                  // onChange={handleImageChange}
+                />
+              </label>
             </div>
+            {isLoading ? (
+              <div className="flex flex-col gap-4 my-11 w-1/2">
+                <div className="skeleton h-2 w-32 mx-48"></div>
+                <div className="skeleton h-2 w-32 mx-48"></div>
+              </div>
+            ) : (
+              <div>
+                <p className="text-center text-2xl my-3 font-semibold">
+                  {user.name}
+                </p>
+                <p className="text-center text-gray-600">{user.email}</p>
+              </div>
+            )}
           </div>
-          {isLoading ? (
-            <div className="flex flex-col gap-4 my-11 w-1/2">
-              <div className="skeleton h-2 w-32 mx-48"></div>
-              <div className="skeleton h-2 w-32 mx-48"></div>
-            </div>
-          ) : (
-            <div>
-              <p className="text-center text-2xl my-3 font-semibold">
-                {user.name}
-              </p>
-              <p className="text-center text-gray-600">{user.email}</p>
-            </div>
-          )}
 
-          <div className="mt-5 ">
+          <div className="mt-5 flex justify-center md:block">
             <NavLink
               to="posts"
               className={({ isActive }) =>
                 isActive ? "font-bold" : " font-thin"
               }
             >
-              <p className="border-2 py-5 px-12 w-3/4 text-start mx-auto">
+              <p className="border-2 p-5 md:px-12 md:w-3/4 text-start md:mx-auto">
                 Your posts
               </p>
             </NavLink>
@@ -50,13 +61,13 @@ export default function Profile() {
                 isActive ? "font-bold" : " font-thin"
               }
             >
-              <p className="border-2 py-5 px-12 w-3/4 text-start mx-auto border-t-0">
+              <p className="border-2 py-5 px-5 md:px-12 md:w-3/4 text-start md:mx-auto md:border-t-0">
                 Your favourite posts
               </p>
             </NavLink>
           </div>
         </div>
-        <div className=" ml-[35%]  w-[100%]">
+        <div className=" md:ml-[35%]  w-[100%]">
           <Outlet></Outlet>
         </div>
       </div>

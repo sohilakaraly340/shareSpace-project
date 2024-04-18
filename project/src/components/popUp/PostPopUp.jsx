@@ -92,7 +92,7 @@ export default function PostPopUp() {
               className="btn my-10 mx-auto mb-5 px-10 block  py-3.5 bg-[#1b2327e9] text-white hover:scale-95"
               type="submit"
               disabled={
-                (values.text === "" && values.image === "") || isLoading
+                values.title === "" || values.description === "" || isLoading
               }
             >
               {editMood ? " Update Post" : "Add Post"}

@@ -8,14 +8,22 @@ import { useNavigate } from "react-router-dom";
 import Post from "../components/post/Post";
 
 export default function Home() {
-  const { posts, isLoading, setPopup, getAllPosts, hasMore } =
+  const { posts, isLoading, setPopup, getAllPosts, hasMore, showItems } =
     useContext(Context);
   const userName = localStorage.getItem("name");
   const navigate = useNavigate();
 
+  if (showItems.length === 0)
+    return (
+      <div className="text-3xl font-semibold text-center pt-80">
+        No Posts.😥
+      </div>
+    );
+
   return (
     <div className="pt-20">
       <PostPopUp />
+
       <InfiniteScroll
         className="w-[80%] md:w-1/2 mx-auto"
         dataLength={posts.length}
@@ -37,7 +45,7 @@ export default function Home() {
           <p className="text-center font-bold text-xl my-3">No more posts.</p>
         }
       >
-        {posts.map((post) => (
+        {showItems.map((post) => (
           <Post data={post} key={post._id} />
         ))}
       </InfiniteScroll>

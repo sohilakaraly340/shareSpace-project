@@ -15,6 +15,8 @@ export const Provider = ({ children }) => {
   const [user, setUser] = useState({});
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [searchText, setSearchText] = useState("");
+
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
 
@@ -40,7 +42,7 @@ export const Provider = ({ children }) => {
       }
     } catch (error) {
       console.error("Error:", error.message);
-      toast.error("Email already exists or server error");
+      toast.error("Email already exists");
     } finally {
       setIsLoading(false);
     }
@@ -66,8 +68,7 @@ export const Provider = ({ children }) => {
       toast.success("Login successfully ,Wellcom👋 ");
     } catch (error) {
       console.error("Error:", error.response.data.message);
-      // const er = error.response.data.message;
-      toast.error("Email not exist");
+      toast.error("Invalid email or password");
     } finally {
       setIsLoading(false);
     }
@@ -224,6 +225,11 @@ export const Provider = ({ children }) => {
     }
   };
 
+  let showItems =
+    searchText !== ""
+      ? posts.filter((item) => item.title.includes(searchText))
+      : posts;
+
   ////////////////////////////////////////////8
 
   ////////////////////////////////////////////9
@@ -267,10 +273,12 @@ export const Provider = ({ children }) => {
     update,
     setPostToEdit,
     setEditMood,
-
+    setSearchText,
+    searchText,
     user,
     getAllPosts,
     hasMore,
+    showItems,
   };
 
   return <Context.Provider value={AllContext}>{children}</Context.Provider>;

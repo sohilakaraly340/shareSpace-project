@@ -13,7 +13,9 @@ export default function Register() {
 
   const onSubmit = async (values, actions) => {
     await register(values);
-    navigate("/login", { replace: true });
+    if (registered) {
+      navigate("/login", { replace: true });
+    }
   };
   const toggleLoginFormVisibility = () => {
     setIsLoginFormVisible(!isLoginFormVisible);

@@ -51,34 +51,28 @@ const login = async (req, res) => {
   }
 };
 
-// const updateUser = async (req, res) => {
-//   const token = req.headers["jwt"];
+const addFollower = async (req, res) => {
+  const { userId, id } = req.params;
 
-//   const { password } = req.body;
-//   const { error } = validateAddUsers(req.body);
-//   if (error) {
-//     res.status(400).send({ message: error });
-//     return;
-//   }
+  // const post = await Post.findOne({ _id: id });
 
-//   if (!token) {
-//     return res.status(401).send({ message: "un authorized user" });
-//   }
-//   const payLoad = await jwt.verify(token, "myjwtsecret");
-//   const { email } = payLoad;
-//   const user = await User.findOne({ email });
-//   if (!user) {
-//     res.status(404).send(`there is no user with id ${req.params.id}`);
-//     return;
-//   }
-//   const passwordHash = await bcrypt.hash(password, 10);
-//   const Updates = await User.updateOne(
-//     { email },
-//     { email: email, passwordHash: passwordHash }
-//   );
+  const user = await User.findOne({ _id: userId });
 
-//   res.send(Updates);
-// };
+  followers = user.followers;
+  if (!followers.includes(id)) {
+    followers.push(id);
+    res.status(200).send("Following");
+  } else {
+    const index = followers.indexOf(id);
+    followers.splice(index, 1);
+    res.status(200).send("Unfollowing");
+  }
+
+  const Updates = await User.updateOne(
+    { _id: userId },
+    { FavPosts: followers }
+  );
+};
 
 const findAllUsers = async (req, res) => {
   const users = await User.find();
@@ -148,7 +142,7 @@ module.exports = {
   createNewUse,
   login,
   findAllUsers,
-  //   updateUser,
+  addFollower,
   getUserById,
   FavPost,
   isFav,

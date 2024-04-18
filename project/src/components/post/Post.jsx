@@ -99,7 +99,7 @@ export default function Post({ data }) {
             <p className="text-center font-bold text-xl my-5">
               Are you sure you want to delete this post?
             </p>
-            <div className="flex justify-center my-16 gap-7">
+            <div className="flex justify-center gap-7">
               <button
                 className="btn w-28 bg-red-600 text-white hover:bg-red-500"
                 onClick={() => {
@@ -184,11 +184,13 @@ export default function Post({ data }) {
         {data.description && (
           <div className="my-5 mx-8">{data.description}</div>
         )}
-        {data.image && (
+        {data.image ? (
           <img
             src={`http://localhost:3005/uploads/${data.image}`}
-            className="mt-10 w-[100%]"
+            className="mt-10 w-[100%] h-[500px]"
           />
+        ) : (
+          <div className="skeleton-loader mt-10 w-[100%] h-[500px] bg-gray-300"></div>
         )}
       </div>
     </>

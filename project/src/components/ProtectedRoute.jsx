@@ -1,12 +1,9 @@
-import React, { useContext } from "react";
-import { Context } from "../context/Context";
+import React from "react";
+import { Route, Navigate, Outlet } from "react-router-dom";
 
-export default function ProtectedRoute({ element, ...rest }) {
-  const { registerd } = useContext(Context);
+const ProtectedRoute = ({ element, ...rest }) => {
+  const token = localStorage.getItem("token");
+  return token ? <Outlet /> : <Navigate to="/login" />;
+};
 
-  return registerd ? (
-    <Route {...rest} element={element} />
-  ) : (
-    <Navigate to="/" replace />
-  );
-}
+export default ProtectedRoute;

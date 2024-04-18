@@ -17,8 +17,10 @@ import UserPosts from "./pages/UserPosts";
 import Page404 from "./pages/Page404";
 import { useContext } from "react";
 import { Context } from "./context/Context";
+import ProtectedRoute from "./components/ProtectedRoute";
 function App() {
-  const { registered } = useContext(Context);
+  const token = localStorage.getItem("token");
+
   const NavWrapper = () => {
     const location = useLocation();
 
@@ -37,12 +39,20 @@ function App() {
 
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile />}>
-            <Route index element={<UserPosts />} />
-            <Route path="posts" element={<UserPosts />} />
-            <Route path="favourite" element={<FavouritePosts />} />
+          <Route
+            path="/register"
+            element={!token ? <Register /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/login"
+            element={!token ? <Login /> : <Navigate to="/" />}
+          />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/profile" element={<Profile />}>
+              <Route index element={<UserPosts />} />
+              <Route path="posts" element={<UserPosts />} />
+              <Route path="favourite" element={<FavouritePosts />} />
+            </Route>
           </Route>
           <Route path="*" element={<Page404 />} />
         </Routes>

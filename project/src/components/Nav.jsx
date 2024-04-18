@@ -1,20 +1,18 @@
 import React, { useContext } from "react";
 import { Context } from "../context/Context";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import profile from "../assets/profile.png";
 
 export default function Nav() {
   const userName = localStorage.getItem("name");
   const { registered, setRegistered, searchText, handleSearch } =
     useContext(Context);
-
-  // const handleInputChange = (event) => {
-  //   setSearchText(event.target.value);
-  // };
+  const navigate = useNavigate();
 
   const logout = () => {
     localStorage.clear();
     setRegistered(false);
+    navigate("/", { replace: true });
   };
 
   return (

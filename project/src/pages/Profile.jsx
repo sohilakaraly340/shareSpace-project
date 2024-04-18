@@ -12,7 +12,7 @@ export default function Profile() {
       <PostPopUp />
       <div className="md:flex justify-between pt-[100px] ">
         <div className=" md:fixed md:w-1/3">
-          <div className="flex justify-center gap-5 md:block">
+          <div className="flex justify-center items-center gap-5 md:block">
             <div className="rounded-full md:mx-auto w-[100px] md:w-[200px] md:h-[200px] relative">
               <img src={profile} />
               <label

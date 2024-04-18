@@ -7,7 +7,7 @@ Welcome to the ShareSpace project! This is a platform for sharing ideas, resourc
 
 Here are some screenshots of the ShareSpace project:
 
-![Screenshot 1](/project/src/assets/screenShots.jpeg)
+![Screenshot 1](project/src/assets/screenShots/1.jpeg)
 *Description of screenshot 1.*
 
 ![Screenshot 2](/screenshots/screenshot2.png)

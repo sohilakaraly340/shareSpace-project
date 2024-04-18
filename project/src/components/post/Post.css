@@ -11,15 +11,16 @@
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 40%;
-  height: 32%;
   transform: translate(-50%, -50%);
   background-color: white;
-  padding: 20px;
+  padding: 3em;
   border: 1px solid #ccc;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   border-radius: 30px;
+}
+.confirmPopup button {
+  margin-top: 20px;
 }
 
 .confirmPopup button:focus {

@@ -15,6 +15,8 @@ export const Provider = ({ children }) => {
   const [user, setUser] = useState({});
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [searchText, setSearchText] = useState("");
+
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
 
@@ -40,7 +42,7 @@ export const Provider = ({ children }) => {
       }
     } catch (error) {
       console.error("Error:", error.message);
-      toast.error("Email already exists or server error");
+      toast.error("Email already exists");
     } finally {
       setIsLoading(false);
     }
@@ -66,8 +68,7 @@ export const Provider = ({ children }) => {
       toast.success("Login successfully ,Wellcom👋 ");
     } catch (error) {
       console.error("Error:", error.response.data.message);
-      // const er = error.response.data.message;
-      toast.error("Email not exist");
+      toast.error("Invalid email or password");
     } finally {
       setIsLoading(false);
     }
@@ -109,17 +110,13 @@ export const Provider = ({ children }) => {
         body,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
             JWT: `${token}`,
           },
         }
       );
-      console.log(body);
-
-      const newPosts = [...posts];
-      newPosts.unshift(body);
-      setPosts(newPosts);
-      console.log(newPosts);
+      const newPost = data.data;
+      setPosts([newPost, ...posts]);
       setPopup(false);
     } catch (error) {
       console.error("Error:", error);
@@ -141,7 +138,7 @@ export const Provider = ({ children }) => {
         body,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
             JWT: `${token}`,
           },
         }
@@ -151,10 +148,13 @@ export const Provider = ({ children }) => {
       const index = newPosts.findIndex((post) => post._id === postToEdit._id);
       newPosts[index] = {
         ...newPosts[index],
-        image: body.image,
-        description: body.description,
+        image: data.data.image,
+        description: data.data.description,
+        title: data.data.title,
       };
       setPosts(newPosts);
+
+      console.log(newPosts);
 
       setPopup(false);
       setEditMood(false);
@@ -188,17 +188,23 @@ export const Provider = ({ children }) => {
   };
 
   useEffect(() => {
-    getAllPosts();
-
+    setIsLoading(true);
     const fetchData = async () => {
       if (userId) {
         setRegistered(true);
-        const userData = await getUser(userId);
-        setUser(userData);
+        try {
+          const userData = await getUser(userId);
+          setUser(userData);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
       }
+      setIsLoading(false);
     };
 
     fetchData();
+
+    getAllPosts();
   }, []);
 
   /////////////////////////////////////////////7
@@ -219,31 +225,16 @@ export const Provider = ({ children }) => {
     }
   };
 
-  ////////////////////////////////////////////8
+  //////////////////////////////////////////////////
+  const handleSearch = (e) => {
+    const search = e.target.value;
+    setSearchText(search);
+  };
 
-  ////////////////////////////////////////////9
-  // const getAllFavPosts = async (userid) => {
-  //   // setIsLoading(true);
-  //   try {
-  //     const { data } = await axios.get(
-  //       `http://localhost:3005/api/v1/user/favourite/${userid}`,
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           JWT: `${token}`,
-  //         },
-  //       }
-  //     );
-  //     console.log(data);
-  //     // toast.success("ok ");
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //   }
-  //   //  finally {
-  //   //   setIsLoading(false);
-  //   // }
-  //   // getAllPosts();
-  // };
+  let showItems =
+    searchText !== ""
+      ? posts.filter((item) => item.title.includes(searchText))
+      : posts;
 
   const AllContext = {
     isLoading,
@@ -262,10 +253,13 @@ export const Provider = ({ children }) => {
     update,
     setPostToEdit,
     setEditMood,
-
+    setSearchText,
+    searchText,
     user,
     getAllPosts,
     hasMore,
+    showItems,
+    handleSearch,
   };
 
   return <Context.Provider value={AllContext}>{children}</Context.Provider>;

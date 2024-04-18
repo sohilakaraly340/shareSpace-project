@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./Popup.css";
 import { Context } from "../../context/Context";
 import profile from "../../assets/profile.png";
@@ -16,46 +16,63 @@ export default function PostPopUp() {
     setEditMood,
     setPostToEdit,
   } = useContext(Context);
+  const [image, setImage] = useState(null);
 
   const userName = localStorage.getItem("name");
   const userid = localStorage.getItem("userId");
 
-  const onSubmit = async (values, actions) => {
-    const body = {
-      image: values.image,
-      description: values.text,
-      user: { _id: userid, name: userName },
-    };
-    editMood ? update(body) : AddPost(body);
-    // console.log(body);
+  const onSubmit = (values, actions) => {
+    const formData = new FormData();
+    if (image) {
+      formData.append("image", image);
+    }
+    formData.append("title", values.title);
+    formData.append("description", values.text);
+    formData.append("user", userid);
+
+    editMood ? update(formData) : AddPost(formData);
+  };
+
+  const fileChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
   };
 
   let { values, handleBlur, handleChange, handleSubmit } = useFormik({
     initialValues: editMood
       ? {
           text: postToEdit.description,
-          image: postToEdit.image,
+          title: postToEdit.title,
         }
       : {
           text: "",
-          image: "",
+          title: "",
         },
     onSubmit,
     enableReinitialize: true,
   });
-  // console.log(editMood, values, postToEdit);
 
   return popup ? (
     <>
       <div className="popup">
         <div className="popup_inner">
           <div className="flex w-10 items-center justify-center gap-3 mx-11 my-5">
-            <img src={profile} />
+            <img src={profile} alt="Profile" />
             <h2>{userName}</h2>
           </div>
-
           <form onSubmit={handleSubmit}>
+            <input
+              className="border border-gray-600 w-[80%]"
+              id="title"
+              name="title"
+              onChange={handleChange}
+              value={values.title}
+              onBlur={handleBlur}
+              type="text"
+              placeholder="Title"
+            />
             <textarea
+              className="border border-gray-600 w-[80%]"
               id="text"
               name="text"
               onChange={handleChange}
@@ -63,20 +80,19 @@ export default function PostPopUp() {
               onBlur={handleBlur}
               placeholder="What's on your mind?"
             ></textarea>
+
             <input
-              id="image"
+              type="file"
+              onChange={fileChange}
               name="image"
-              onChange={handleChange}
-              value={values.image}
-              onBlur={handleBlur}
-              type="text"
-              placeholder="uplouad image"
+              className="file-input w-full max-w-xs p-0"
             />
+
             <button
               className="btn my-10 mx-auto mb-5 px-10 block  py-3.5 bg-[#1b2327e9] text-white hover:scale-95"
               type="submit"
               disabled={
-                (values.text === "" && values.image === "") || isLoading
+                values.title === "" || values.description === "" || isLoading
               }
             >
               {editMood ? " Update Post" : "Add Post"}

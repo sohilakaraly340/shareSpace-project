@@ -2,46 +2,50 @@ import React, { useContext, useEffect } from "react";
 import { Context } from "../context/Context";
 
 import AddPost from "../icons/AddPost";
-import PostPopUp from "./popUp/PostPopUp";
+import PostPopUp from "../components/popUp/PostPopUp";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useNavigate } from "react-router-dom";
-import Post from "./post/Post";
+import Post from "../components/post/Post";
 
 export default function Home() {
-  const { posts, isLoading, setPopup, getAllPosts, hasMore } =
+  const { posts, isLoading, setPopup, getAllPosts, hasMore, showItems } =
     useContext(Context);
   const userName = localStorage.getItem("name");
   const navigate = useNavigate();
 
-  if (isLoading)
-    return (
-      <div className="flex flex-col gap-4 w-1/2 pt-24 mx-auto">
-        <div className="flex gap-4 items-center">
-          <div className="skeleton w-16 h-16 rounded-full shrink-0"></div>
-          <div className="flex flex-col gap-4">
-            <div className="skeleton h-4 w-20"></div>
-            <div className="skeleton h-4 w-28"></div>
-          </div>
-        </div>
-        <div className="skeleton h-60 w-full"></div>
-      </div>
-    );
+  // if (showItems.length === 0)
+  //   return (
+  //     <div className="text-3xl font-semibold text-center pt-80">
+  //       No Posts.😥
+  //     </div>
+  //   );
 
   return (
     <div className="pt-20">
       <PostPopUp />
+
       <InfiniteScroll
+        className="w-[80%] md:w-1/2 mx-auto"
         dataLength={posts.length}
         next={getAllPosts}
         hasMore={hasMore}
         loader={
-          <h4 className="text-center font-bold text-xl my-3">Loading...</h4>
+          <div className="flex flex-col gap-4 w-1/2 pt-24 mx-auto">
+            <div className="flex gap-4 items-center">
+              <div className="skeleton w-16 h-16 rounded-full shrink-0"></div>
+              <div className="flex flex-col gap-4">
+                <div className="skeleton h-4 w-20"></div>
+                <div className="skeleton h-4 w-28"></div>
+              </div>
+            </div>
+            <div className="skeleton h-60 w-full"></div>
+          </div>
         }
         endMessage={
           <p className="text-center font-bold text-xl my-3">No more posts.</p>
         }
       >
-        {posts.map((post) => (
+        {showItems.map((post) => (
           <Post data={post} key={post._id} />
         ))}
       </InfiniteScroll>

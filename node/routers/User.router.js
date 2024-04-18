@@ -7,6 +7,7 @@ const {
   FavPost,
   isFav,
   getUserFAv,
+  addFollower,
 } = require("../controllers/User.controller");
 const { auth } = require("../middleware/auth");
 
@@ -20,5 +21,6 @@ router.post("/login", login);
 router.post("/favourite/:userId/:id", FavPost);
 router.get("/favourite/:userId/:id", isFav);
 router.get("/favourite/:userId", getUserFAv);
+router.post("/follow", addFollower);
 
 module.exports = router;

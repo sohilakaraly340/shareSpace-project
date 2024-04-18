@@ -51,34 +51,40 @@ const login = async (req, res) => {
   }
 };
 
-// const updateUser = async (req, res) => {
-//   const token = req.headers["jwt"];
+const addFollower = async (req, res) => {
+  try {
+    const { userId, id } = req.body;
 
-//   const { password } = req.body;
-//   const { error } = validateAddUsers(req.body);
-//   if (error) {
-//     res.status(400).send({ message: error });
-//     return;
-//   }
+    const user = await User.findOne({ _id: userId });
+    const secondUser = await User.findOne({ _id: id });
 
-//   if (!token) {
-//     return res.status(401).send({ message: "un authorized user" });
-//   }
-//   const payLoad = await jwt.verify(token, "myjwtsecret");
-//   const { email } = payLoad;
-//   const user = await User.findOne({ email });
-//   if (!user) {
-//     res.status(404).send(`there is no user with id ${req.params.id}`);
-//     return;
-//   }
-//   const passwordHash = await bcrypt.hash(password, 10);
-//   const Updates = await User.updateOne(
-//     { email },
-//     { email: email, passwordHash: passwordHash }
-//   );
+    if (!user || !secondUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
-//   res.send(Updates);
-// };
+    if (!user.following.includes(id)) {
+      user.following.push(id);
+    } else {
+      const index = user.following.indexOf(id);
+      user.following.splice(index, 1);
+    }
+
+    if (!secondUser.followers.includes(userId)) {
+      secondUser.followers.push(userId);
+    } else {
+      const index = secondUser.followers.indexOf(userId);
+      secondUser.followers.splice(index, 1);
+    }
+
+    await user.save();
+    await secondUser.save();
+
+    res.status(200).json({ message: "Operation successful" });
+  } catch (error) {
+    console.error("Error adding follower:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 const findAllUsers = async (req, res) => {
   const users = await User.find();
@@ -148,7 +154,7 @@ module.exports = {
   createNewUse,
   login,
   findAllUsers,
-  //   updateUser,
+  addFollower,
   getUserById,
   FavPost,
   isFav,

@@ -6,17 +6,42 @@ import "./Post.css";
 import axios from "axios";
 import toast from "react-hot-toast";
 import profile from "../../assets/profile.png";
-
 export default function Post({ data }) {
   const userId = localStorage.getItem("userId");
+  const userName = localStorage.getItem("name");
   const token = localStorage.getItem("token");
 
   const { deletePost, editPost, registered } = useContext(Context);
   const [confirmPopup, setConfirmPopup] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
+  const [following, setFollowing] = useState(false);
 
   const handleDelete = () => {
     setConfirmPopup(true);
+  };
+
+  const handleFollow = async () => {
+    if (token) {
+      try {
+        const res = await axios.post(
+          `http://localhost:3005/api/v1/user/follow`,
+          { userId: userId, id: data.user._id },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              JWT: `${token}`,
+            },
+          }
+        );
+        if (following) toast.success("Removed from following");
+        else toast.success("following");
+        setFollowing(!following);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    } else {
+      toast.error("You need to logIn first");
+    }
   };
 
   const handleConfirm = () => {
@@ -35,6 +60,7 @@ export default function Post({ data }) {
 
   const toggleFav = async () => {
     if (token) {
+      setIsClicked(!isClicked);
       try {
         const res = await axios.post(
           `http://localhost:3005/api/v1/user/favourite/${userId}/${data._id}`,
@@ -47,7 +73,6 @@ export default function Post({ data }) {
         );
         if (isClicked) toast.success("Removed from favorite");
         else toast.success("Added to favorite");
-        setIsClicked(!isClicked);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -68,6 +93,7 @@ export default function Post({ data }) {
             },
           }
         );
+        console.log(data);
         return data;
       } catch (error) {
         console.error("Error:", error);
@@ -79,6 +105,7 @@ export default function Post({ data }) {
         const userData = await getUser(userId);
         if (userData.FavPosts.some((post) => post._id === data._id))
           setIsClicked(true);
+        if (userData.following.includes(data.user._id)) setFollowing(true);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -88,7 +115,10 @@ export default function Post({ data }) {
   }, []);
 
   useEffect(() => {
-    if (!registered) setIsClicked(false);
+    if (!registered) {
+      setIsClicked(false);
+      setFollowing(false);
+    }
   }, [registered]);
   return (
     <>
@@ -99,7 +129,7 @@ export default function Post({ data }) {
             <p className="text-center font-bold text-xl my-5">
               Are you sure you want to delete this post?
             </p>
-            <div className="flex justify-center my-16 gap-7">
+            <div className="flex justify-center gap-7">
               <button
                 className="btn w-28 bg-red-600 text-white hover:bg-red-500"
                 onClick={() => {
@@ -120,28 +150,28 @@ export default function Post({ data }) {
           </div>
         </>
       )}
-      <div className="border border-slate-600 mx-auto my-5 p-5 w-1/2 relative">
-        <div className="absolute right-3 ">
-          {data.user._id == userId && (
+      <div className="border border-slate-600 mx-auto my-5 p-5   relative">
+        <div className="absolute right-5 ">
+          {data.user && (data.user == userId || data.user._id == userId) && (
             <p
               className="mb-2"
               onClick={() => {
                 handleDelete();
               }}
             >
-              <div className="tooltip tooltip-right" data-tip="delete">
+              <div className="tooltip tooltip-top " data-tip="delete">
                 <Delete />
               </div>
             </p>
           )}
-          {data.user._id == userId && (
+          {data.user && (data.user == userId || data.user._id == userId) && (
             <p
               className="mb-2"
               onClick={() => {
                 handleEditPost();
               }}
             >
-              <div className="tooltip tooltip-right" data-tip="edit">
+              <div className="tooltip tooltip-top " data-tip="edit">
                 <Edit h={"5"} w={"5"} hover={"text-cyan-600"} />
               </div>
             </p>
@@ -173,13 +203,33 @@ export default function Post({ data }) {
         </div>
         <div className="flex gap-3 items-center ">
           <img className="w-[5%]" src={profile} />
-          <p className="text-lg font-semibold">{data.user.name}</p>
+          {data.user && (
+            <>
+              <p className="text-lg font-semibold">
+                {data.user.name || userName}
+              </p>
+              {data.user !== userId && data.user._id !== userId && (
+                <p
+                  onClick={handleFollow}
+                  className="border  cursor-pointer border-slate-200 px-5 py-2 rounded-md"
+                >
+                  {!following ? "follow" : "following"}
+                </p>
+              )}
+            </>
+          )}
         </div>
+        {data.title && <p className="my-5 mx-8 font-semibold">{data.title}</p>}
 
         {data.description && (
           <div className="my-5 mx-8">{data.description}</div>
         )}
-        {data.image && <img src={data.image} className="mt-10" />}
+        {data.image && (
+          <img
+            src={`http://localhost:3005/uploads/${data.image}`}
+            className="mt-10 w-[100%] h-[500px]"
+          />
+        )}
       </div>
     </>
   );

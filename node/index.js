@@ -11,6 +11,7 @@ const cors = require("cors");
 const app = express();
 
 app.use(cors());
+app.use("/uploads", express.static("uploads"));
 
 app.use(express.json());
 
@@ -21,7 +22,6 @@ app.use(express.json());
 app.use(`${process.env.API_URL}post`, postRouter);
 
 app.use(`${process.env.API_URL}user`, userRouter);
-// app.use(`${process.env.API_URL}upload`, imageRouter);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

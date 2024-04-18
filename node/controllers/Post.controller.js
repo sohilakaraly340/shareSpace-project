@@ -35,21 +35,38 @@ const getPostById = asyncHandler(async (req, res) => {
 const createPost = asyncHandler(async (req, res) => {
   try {
     const userId = req.body.user;
-    const user = User.findById({ _id: userId });
+    const user = await User.findById(userId);
 
-    if (!user) return `there is no user with this id : ${userId}`;
-    const newPost = await Post.create(req.body);
+    if (!user)
+      return res
+        .status(404)
+        .json({ error: `There is no user with this id: ${userId}` });
+
+    const newPost = new Post({
+      title: req.body.title,
+      description: req.body.description,
+      user: userId,
+      image: req.file.filename,
+    });
+    await newPost.save();
+
     res.status(201).json({ data: newPost });
   } catch (error) {
-    res.send(error);
+    res.status(500).json({ error: error.message });
   }
 });
 
 const updatePost = asyncHandler(async (req, res) => {
   try {
     const id = req.params.id;
-    const Updates = await Post.updateOne({ _id: id }, req.body);
-    res.status(201).json({ message: "updated", data: Updates });
+    const newPost = {
+      title: req.body.title,
+      description: req.body.description,
+      user: req.body.user,
+      image: req.file.filename,
+    };
+    const Updates = await Post.updateOne({ _id: id }, newPost);
+    res.status(201).json({ message: "updated", data: newPost });
   } catch (error) {
     res.send(error);
   }

@@ -4,6 +4,9 @@ const postsSchema = mongoose.Schema({
   image: {
     type: String,
   },
+  title: {
+    type: String,
+  },
   description: {
     type: String,
     minLength: 0,

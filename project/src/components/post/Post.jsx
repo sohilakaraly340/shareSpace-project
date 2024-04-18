@@ -6,9 +6,9 @@ import "./Post.css";
 import axios from "axios";
 import toast from "react-hot-toast";
 import profile from "../../assets/profile.png";
-
 export default function Post({ data }) {
   const userId = localStorage.getItem("userId");
+  const userName = localStorage.getItem("name");
   const token = localStorage.getItem("token");
 
   const { deletePost, editPost, registered } = useContext(Context);
@@ -120,28 +120,28 @@ export default function Post({ data }) {
           </div>
         </>
       )}
-      <div className="border border-slate-600 mx-auto my-5 p-5 w-1/2 relative">
-        <div className="absolute right-3 ">
-          {data.user._id == userId && (
+      <div className="border border-slate-600 mx-auto my-5 p-5   relative">
+        <div className="absolute right-5 ">
+          {data.user && (data.user == userId || data.user._id == userId) && (
             <p
               className="mb-2"
               onClick={() => {
                 handleDelete();
               }}
             >
-              <div className="tooltip tooltip-right" data-tip="delete">
+              <div className="tooltip tooltip-top " data-tip="delete">
                 <Delete />
               </div>
             </p>
           )}
-          {data.user._id == userId && (
+          {data.user && (data.user == userId || data.user._id == userId) && (
             <p
               className="mb-2"
               onClick={() => {
                 handleEditPost();
               }}
             >
-              <div className="tooltip tooltip-right" data-tip="edit">
+              <div className="tooltip tooltip-top " data-tip="edit">
                 <Edit h={"5"} w={"5"} hover={"text-cyan-600"} />
               </div>
             </p>
@@ -173,13 +173,23 @@ export default function Post({ data }) {
         </div>
         <div className="flex gap-3 items-center ">
           <img className="w-[5%]" src={profile} />
-          <p className="text-lg font-semibold">{data.user.name}</p>
+          {data.user && (
+            <p className="text-lg font-semibold">
+              {data.user.name || userName}
+            </p>
+          )}
         </div>
+        {data.title && <p className="my-5 mx-8 font-semibold">{data.title}</p>}
 
         {data.description && (
           <div className="my-5 mx-8">{data.description}</div>
         )}
-        {data.image && <img src={data.image} className="mt-10" />}
+        {data.image && (
+          <img
+            src={`http://localhost:3005/uploads/${data.image}`}
+            className="mt-10 w-[100%]"
+          />
+        )}
       </div>
     </>
   );

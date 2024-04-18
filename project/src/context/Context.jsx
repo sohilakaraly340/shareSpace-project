@@ -109,17 +109,13 @@ export const Provider = ({ children }) => {
         body,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
             JWT: `${token}`,
           },
         }
       );
-      console.log(body);
-
-      const newPosts = [...posts];
-      newPosts.unshift(body);
-      setPosts(newPosts);
-      console.log(newPosts);
+      const newPost = data.data;
+      setPosts([newPost, ...posts]);
       setPopup(false);
     } catch (error) {
       console.error("Error:", error);
@@ -141,7 +137,7 @@ export const Provider = ({ children }) => {
         body,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
             JWT: `${token}`,
           },
         }
@@ -151,10 +147,13 @@ export const Provider = ({ children }) => {
       const index = newPosts.findIndex((post) => post._id === postToEdit._id);
       newPosts[index] = {
         ...newPosts[index],
-        image: body.image,
-        description: body.description,
+        image: data.data.image,
+        description: data.data.description,
+        title: data.data.title,
       };
       setPosts(newPosts);
+
+      console.log(newPosts);
 
       setPopup(false);
       setEditMood(false);
@@ -188,17 +187,23 @@ export const Provider = ({ children }) => {
   };
 
   useEffect(() => {
-    getAllPosts();
-
+    setIsLoading(true);
     const fetchData = async () => {
       if (userId) {
         setRegistered(true);
-        const userData = await getUser(userId);
-        setUser(userData);
+        try {
+          const userData = await getUser(userId);
+          setUser(userData);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
       }
+      setIsLoading(false);
     };
 
     fetchData();
+
+    getAllPosts();
   }, []);
 
   /////////////////////////////////////////////7

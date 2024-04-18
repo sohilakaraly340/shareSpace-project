@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../context/Context";
-import Post from "./post/Post";
+import Post from "../components/post/Post";
 import InfiniteScroll from "react-infinite-scroll-component";
 import axios from "axios";
-import PostPopUp from "./popUp/PostPopUp";
+import PostPopUp from "../components/popUp/PostPopUp";
 
 export default function UserPosts() {
   const userId = localStorage.getItem("userId");
@@ -11,6 +11,8 @@ export default function UserPosts() {
   const [hasMore, setHasMore] = useState(true);
   const [userPosts, setUserPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const { posts } = useContext(Context);
 
   const getAllPosts = async () => {
     if (page === 1) {
@@ -51,7 +53,7 @@ export default function UserPosts() {
 
   useEffect(() => {
     getUserPosts();
-  }, []);
+  }, [posts]);
 
   if (isLoading)
     return (
@@ -66,12 +68,33 @@ export default function UserPosts() {
         <div className="skeleton h-60 w-full"></div>
       </div>
     );
+
+  if (userPosts.length === 0)
+    return (
+      <div className="text-center font-semibold my-52 text-4xl">
+        No favorite posts found. 😥{" "}
+        <p className="text-2xl my-7">Go and post now! </p>
+      </div>
+    );
   return (
     <div>
       <InfiniteScroll
+        className="w-[80%] mx-auto"
         dataLength={userPosts.length}
         next={getUserPosts}
         hasMore={hasMore}
+        loader={
+          <div className="flex flex-col gap-4 w-1/2 pt-24 mx-auto">
+            <div className="flex gap-4 items-center">
+              <div className="skeleton w-16 h-16 rounded-full shrink-0"></div>
+              <div className="flex flex-col gap-4">
+                <div className="skeleton h-4 w-20"></div>
+                <div className="skeleton h-4 w-28"></div>
+              </div>
+            </div>
+            <div className="skeleton h-60 w-full"></div>
+          </div>
+        }
         endMessage={
           <p className="text-center font-bold text-xl my-3">No more posts.</p>
         }

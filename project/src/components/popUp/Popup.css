@@ -17,6 +17,7 @@
   background-color: white;
   height: 70%;
   overflow: auto;
+  padding: 10px 20px;
 }
 .popup_inner::-webkit-scrollbar {
   width: 0;
@@ -31,15 +32,19 @@
   border: none;
 }
 textarea {
-  width: 90%;
   padding: 20px;
-  margin: 0 20px;
-  height: 200px;
+  margin: 10px 28px;
+  height: 150px;
 }
 input {
-  width: 50%;
   padding: 20px;
   margin: 0 28px;
+}
+input:focus {
+  outline: none;
+}
+textarea:focus {
+  outline: none;
 }
 @media only screen and (max-width: 600px) {
   .popup_inner {

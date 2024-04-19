@@ -13,13 +13,6 @@ export default function Home() {
   const userName = localStorage.getItem("name");
   const navigate = useNavigate();
 
-  // if (showItems.length === 0)
-  //   return (
-  //     <div className="text-3xl font-semibold text-center pt-80">
-  //       No Posts.😥
-  //     </div>
-  //   );
-
   return (
     <div className="pt-20">
       <PostPopUp />

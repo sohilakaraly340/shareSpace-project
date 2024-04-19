@@ -5,7 +5,7 @@ ShareSpace is a web-based platform to share thoughts, ideas, and stories with th
 
 ## Features
 - **Search**: Users can search for blog posts by title.
-- **Browse**: Explore a curated selection of popular and trending blog posts.
+- **Browse**: Explore blog posts.
 - **Create**: Users can create and publish their own blog posts, including text, images.
 - **Edit**: Easily edit and update your existing blog posts to keep them relevant and up-to-date.
 - **Delete**: Remove unwanted or outdated blog posts from your profile.

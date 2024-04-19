@@ -7,7 +7,7 @@ import PostPopUp from "../components/popUp/PostPopUp";
 
 export default function Profile() {
   const { user, isLoading } = useContext(Context);
-
+  console.log(user);
   return (
     <>
       <PostPopUp />
@@ -40,6 +40,17 @@ export default function Profile() {
                   {user.name}
                 </p>
                 <p className="text-center text-gray-600">{user.email}</p>
+
+                <p className="text-center mt-3 font-semibold">
+                  {user && user.following.length === 0
+                    ? 0
+                    : user.following.length}
+                  <p className="inline font-normal pr-3"> Following</p>{" "}
+                  {user && user.followers.length === 0
+                    ? 0
+                    : user.followers.length}{" "}
+                  <p className="inline font-normal"> Followers</p>
+                </p>
               </div>
             )}
           </div>

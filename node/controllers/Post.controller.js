@@ -46,7 +46,7 @@ const createPost = asyncHandler(async (req, res) => {
       title: req.body.title,
       description: req.body.description,
       user: userId,
-      image: req.file.filename,
+      image: req.file ? req.file.filename : null,
     });
     await newPost.save();
 

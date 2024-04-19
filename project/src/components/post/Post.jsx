@@ -14,9 +14,34 @@ export default function Post({ data }) {
   const { deletePost, editPost, registered } = useContext(Context);
   const [confirmPopup, setConfirmPopup] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
+  const [following, setFollowing] = useState(false);
 
   const handleDelete = () => {
     setConfirmPopup(true);
+  };
+
+  const handleFollow = async () => {
+    if (token) {
+      try {
+        const res = await axios.post(
+          `http://localhost:3005/api/v1/user/follow`,
+          { userId: userId, id: data.user._id },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              JWT: `${token}`,
+            },
+          }
+        );
+        if (following) toast.success("Removed from following");
+        else toast.success("following");
+        setFollowing(!following);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    } else {
+      toast.error("You need to logIn first");
+    }
   };
 
   const handleConfirm = () => {
@@ -35,6 +60,7 @@ export default function Post({ data }) {
 
   const toggleFav = async () => {
     if (token) {
+      setIsClicked(!isClicked);
       try {
         const res = await axios.post(
           `http://localhost:3005/api/v1/user/favourite/${userId}/${data._id}`,
@@ -47,7 +73,6 @@ export default function Post({ data }) {
         );
         if (isClicked) toast.success("Removed from favorite");
         else toast.success("Added to favorite");
-        setIsClicked(!isClicked);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -68,6 +93,7 @@ export default function Post({ data }) {
             },
           }
         );
+        console.log(data);
         return data;
       } catch (error) {
         console.error("Error:", error);
@@ -79,6 +105,7 @@ export default function Post({ data }) {
         const userData = await getUser(userId);
         if (userData.FavPosts.some((post) => post._id === data._id))
           setIsClicked(true);
+        if (userData.following.includes(data.user._id)) setFollowing(true);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -88,7 +115,10 @@ export default function Post({ data }) {
   }, []);
 
   useEffect(() => {
-    if (!registered) setIsClicked(false);
+    if (!registered) {
+      setIsClicked(false);
+      setFollowing(false);
+    }
   }, [registered]);
   return (
     <>
@@ -174,9 +204,19 @@ export default function Post({ data }) {
         <div className="flex gap-3 items-center ">
           <img className="w-[5%]" src={profile} />
           {data.user && (
-            <p className="text-lg font-semibold">
-              {data.user.name || userName}
-            </p>
+            <>
+              <p className="text-lg font-semibold">
+                {data.user.name || userName}
+              </p>
+              {data.user !== userId && data.user._id !== userId && (
+                <p
+                  onClick={handleFollow}
+                  className="border  cursor-pointer border-slate-200 px-5 py-2 rounded-md"
+                >
+                  {!following ? "follow" : "following"}
+                </p>
+              )}
+            </>
           )}
         </div>
         {data.title && <p className="my-5 mx-8 font-semibold">{data.title}</p>}
@@ -184,13 +224,11 @@ export default function Post({ data }) {
         {data.description && (
           <div className="my-5 mx-8">{data.description}</div>
         )}
-        {data.image ? (
+        {data.image && (
           <img
             src={`http://localhost:3005/uploads/${data.image}`}
             className="mt-10 w-[100%] h-[500px]"
           />
-        ) : (
-          <div className="skeleton-loader mt-10 w-[100%] h-[500px] bg-gray-300"></div>
         )}
       </div>
     </>

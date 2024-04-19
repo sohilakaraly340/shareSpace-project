@@ -52,26 +52,38 @@ const login = async (req, res) => {
 };
 
 const addFollower = async (req, res) => {
-  const { userId, id } = req.params;
+  try {
+    const { userId, id } = req.body;
 
-  // const post = await Post.findOne({ _id: id });
+    const user = await User.findOne({ _id: userId });
+    const secondUser = await User.findOne({ _id: id });
 
-  const user = await User.findOne({ _id: userId });
+    if (!user || !secondUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
-  followers = user.followers;
-  if (!followers.includes(id)) {
-    followers.push(id);
-    res.status(200).send("Following");
-  } else {
-    const index = followers.indexOf(id);
-    followers.splice(index, 1);
-    res.status(200).send("Unfollowing");
+    if (!user.following.includes(id)) {
+      user.following.push(id);
+    } else {
+      const index = user.following.indexOf(id);
+      user.following.splice(index, 1);
+    }
+
+    if (!secondUser.followers.includes(userId)) {
+      secondUser.followers.push(userId);
+    } else {
+      const index = secondUser.followers.indexOf(userId);
+      secondUser.followers.splice(index, 1);
+    }
+
+    await user.save();
+    await secondUser.save();
+
+    res.status(200).json({ message: "Operation successful" });
+  } catch (error) {
+    console.error("Error adding follower:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
-
-  const Updates = await User.updateOne(
-    { _id: userId },
-    { FavPosts: followers }
-  );
 };
 
 const findAllUsers = async (req, res) => {

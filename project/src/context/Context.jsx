@@ -225,36 +225,16 @@ export const Provider = ({ children }) => {
     }
   };
 
+  //////////////////////////////////////////////////
+  const handleSearch = (e) => {
+    const search = e.target.value;
+    setSearchText(search);
+  };
+
   let showItems =
     searchText !== ""
       ? posts.filter((item) => item.title.includes(searchText))
       : posts;
-
-  ////////////////////////////////////////////8
-
-  ////////////////////////////////////////////9
-  // const getAllFavPosts = async (userid) => {
-  //   // setIsLoading(true);
-  //   try {
-  //     const { data } = await axios.get(
-  //       `http://localhost:3005/api/v1/user/favourite/${userid}`,
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           JWT: `${token}`,
-  //         },
-  //       }
-  //     );
-  //     console.log(data);
-  //     // toast.success("ok ");
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //   }
-  //   //  finally {
-  //   //   setIsLoading(false);
-  //   // }
-  //   // getAllPosts();
-  // };
 
   const AllContext = {
     isLoading,
@@ -279,6 +259,7 @@ export const Provider = ({ children }) => {
     getAllPosts,
     hasMore,
     showItems,
+    handleSearch,
   };
 
   return <Context.Provider value={AllContext}>{children}</Context.Provider>;

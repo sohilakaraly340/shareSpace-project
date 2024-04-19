@@ -16,6 +16,7 @@ export default function Register() {
     if (registered) {
       navigate("/login", { replace: true });
     }
+    resetForm();
   };
   const toggleLoginFormVisibility = () => {
     setIsLoginFormVisible(!isLoginFormVisible);
